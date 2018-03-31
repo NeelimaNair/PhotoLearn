@@ -19,6 +19,10 @@ public class QuizItemAttemptBO {
 
     }
 
+    public QuizItemAttemptBO(String itemId){
+        this.itemId = itemId;
+    }
+
     public QuizItemAttemptBO(String attemptId, String itemId, List<String> answer) {
         this.attemptId = attemptId;
         this.itemId = itemId;

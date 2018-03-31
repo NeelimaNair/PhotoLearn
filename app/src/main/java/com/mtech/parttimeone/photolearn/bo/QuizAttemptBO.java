@@ -9,6 +9,10 @@ import java.util.List;
  */
 
 public class QuizAttemptBO {
+
+    final static String SAVE = "SAVE";
+    final static String SUBMIT = "SUBMIT";
+
     private String userId;
     private String saveState;
     List<QuizItemAttemptBO> attemptBOList;
@@ -46,4 +50,29 @@ public class QuizAttemptBO {
     public void setAttemptBOList(List<QuizItemAttemptBO> attemptBOList) {
         this.attemptBOList = attemptBOList;
     }
+
+    public QuizItemAttemptBO getAttempBo(String quizItemId){
+
+        QuizItemAttemptBO attemptBO = null;
+        for (QuizItemAttemptBO quizItemAttemptBO:attemptBOList){
+            if (quizItemAttemptBO.getItemId().equals(quizItemId)){
+                attemptBO = quizItemAttemptBO;
+            }
+        }
+
+        return attemptBO;
+
+    }
+
+
+    public void initAttemptBoList(List<QuizItemBO> quizItemList){
+        attemptBOList.clear();
+        for (int i=0;i<quizItemList.size();i++){
+            QuizItemBO itemBo = quizItemList.get(i);
+            if (itemBo.getQuizAttemptBO().getAnswer().size() !=0&&!attemptBOList.contains(itemBo.getQuizAttemptBO())){
+                attemptBOList.add(itemBo.getQuizAttemptBO());
+            }
+        }
+    }
+
 }

@@ -19,6 +19,7 @@ import com.mtech.parttimeone.photolearn.ViewModel.QuizItemViewModel;
 import com.mtech.parttimeone.photolearn.asyncTask.UploadAsyncTask;
 import com.mtech.parttimeone.photolearn.bo.QuizItemBO;
 import com.mtech.parttimeone.photolearn.handler.LifeCycleHandler;
+import com.mtech.parttimeone.photolearn.util.AppUtil;
 
 public class QuizItemCreationActivity extends ItemCreationActivity {
 
@@ -26,6 +27,7 @@ public class QuizItemCreationActivity extends ItemCreationActivity {
 
     private String titleId;
     private ListView listView;
+    private String mode;
     QuizItemCreationAdapter adapter;
     private boolean isCreation;
     private Boolean isUploadingData = false;
@@ -37,7 +39,7 @@ public class QuizItemCreationActivity extends ItemCreationActivity {
 
         Intent intent = getIntent();
         titleId = intent.getStringExtra("TitleID");
-
+        mode = intent.getStringExtra("Mode");
         initView();
     }
 
@@ -133,7 +135,7 @@ public class QuizItemCreationActivity extends ItemCreationActivity {
         Log.d(TAG, "saveItem for Quiz:Call ViewModel to save Item!" + downloadUrl);
         adapter.quizItemObj.setPhotoURL(downloadUrl.toString());
         adapter.quizItemObj.setTitleId(titleId);
-       // adapter.quizItemObj.setUserId(LifeCycleHandler.getInstance().getAccountBO().getUid());
+       // adapter.quizItemObj.setUserId(AppUtil.getUserName(this));
         QuizItemViewModel vmquizItemViewModel = ViewModelProviders.of(this).get(QuizItemViewModel.class);
         try {
             vmquizItemViewModel.createQuizItem(adapter.quizItemObj);

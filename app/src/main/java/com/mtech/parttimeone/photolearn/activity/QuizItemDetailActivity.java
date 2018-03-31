@@ -1,5 +1,6 @@
 package com.mtech.parttimeone.photolearn.activity;
 
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.DialogInterface;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -12,14 +13,18 @@ import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.SubMenu;
+import android.view.View;
 import android.widget.ListView;
 import android.widget.PopupMenu;
+import android.widget.Toast;
 
 import com.mtech.parttimeone.photolearn.Adapter.OptionItem;
 import com.mtech.parttimeone.photolearn.Adapter.QuizItemDetailAdapter;
 import com.mtech.parttimeone.photolearn.Adapter.QuizItemDetailViewPagerAdapter;
 import com.mtech.parttimeone.photolearn.Adapter.QuizItemObj;
 import com.mtech.parttimeone.photolearn.R;
+import com.mtech.parttimeone.photolearn.ViewModel.QuizAttemptViewModel;
+import com.mtech.parttimeone.photolearn.ViewModel.QuizItemViewModel;
 import com.mtech.parttimeone.photolearn.bo.QuizAttemptBO;
 import com.mtech.parttimeone.photolearn.bo.QuizItemBO;
 import com.mtech.parttimeone.photolearn.bo.QuizTitleBO;
@@ -32,16 +37,21 @@ import java.util.List;
 
 public class QuizItemDetailActivity extends BaseActivity {
 
+    final static String SAVE = "SAVE";
+    final static String SUBMIT = "SUBMIT";
+
     private FragmentManager mFragmentManager;
     private ViewPager viewPager;
     private List<QuizItemBO> itemArray = new ArrayList<>();
+    private QuizAttemptBO attemptObj = new QuizAttemptBO();
     public Boolean isReview = false;
+    public String titleId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_quiz_item_detail);
-        isReview = true;
+        isReview = attemptObj.getSaveState().equals(SUBMIT);
         initView();
         initData();
         //viewPager.setOffscreenPageLimit(fragmentList.size());
@@ -56,11 +66,11 @@ public class QuizItemDetailActivity extends BaseActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu items for use in the action bar
-       // if (!isReview){
+       if (!isReview){
             getMenuInflater().inflate(R.menu.menu_edit_quizitemdetail_submit,menu);
             return super.onCreateOptionsMenu(menu);
-        //}
-       // return false;
+        }
+        return false;
     }
 
     @Override
@@ -249,14 +259,28 @@ public class QuizItemDetailActivity extends BaseActivity {
     }
 
     private void ExitandSave(){
+        attemptObj.initAttemptBoList(itemArray);
+        //attemptObj.setUserId();
+        QuizAttemptViewModel vmAttemViewModel = ViewModelProviders.of(this).get(QuizAttemptViewModel.class);
+        if (attemptObj.getSaveState().equals(SAVE)){
+            vmAttemViewModel.updateQuizAttempt(attemptObj);
+        }else{
+            try{
+                vmAttemViewModel.createQuizAttempt(attemptObj) ;
+            }catch (Exception e){
+                e.printStackTrace();
+                Toast.makeText(this,"Error Saved the Attempt Answer!",Toast.LENGTH_SHORT).show();
+            }
+        }
 
     }
 
     private void ExitandUnsave(){
 
-        for (int i=0;i<itemArray.size();i++){
-
-        }
+//        for (int i=0;i<itemArray.size();i++){
+//
+//        }
+        this.onBackPressed();
 
     }
 
@@ -297,6 +321,21 @@ public class QuizItemDetailActivity extends BaseActivity {
        builder.show();
 
    }
+
+   private void loadQuizItems(){
+        QuizItemViewModel vmquizItemViewModel = ViewModelProviders.of(this).get(QuizItemViewModel.class);
+       try {
+
+         vmquizItemViewModel.getQuizItems(titleId);
+
+       } catch (Exception e) {
+
+           e.printStackTrace();
+           Toast.makeText(this,"Error adding Quiz Item!",Toast.LENGTH_SHORT).show();
+
+       }
+   }
+
 
    private int getResult(){
 
