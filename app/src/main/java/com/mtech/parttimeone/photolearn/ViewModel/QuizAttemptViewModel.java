@@ -212,7 +212,7 @@ public class QuizAttemptViewModel extends ViewModel {
 
 
     //creates Quiz Attempts filtered by session Id
-    public boolean setQuizAttempt(QuizAttemptBO quizAttemptBO) {
+    private void setQuizAttempt(QuizAttemptBO quizAttemptBO) {
         mQuizAttemptRef = FirebaseDatabase.getInstance().getReference(quizAttemptRepository.getRootNode());
         QuizAttemptEntity eQuizAttempt = new QuizAttemptEntity();
         QuizItemAttemptEntity eItemAttempt = new QuizItemAttemptEntity();
@@ -224,10 +224,9 @@ public class QuizAttemptViewModel extends ViewModel {
             eItemAttempt = eQuizAttempt.getAttemptEntityList().get(i);
             mQuizAttemptRef.child(eQuizAttempt.getUserId()).child(eItemAttempt.getItemId()).child(key).setValue(eQuizAttempt);
         }
-        return true;
     }
 
-    public boolean removeQuizTitle(String itemId) {
+    private void removeQuizTitle(String itemId) {
         mQuizAttemptRef = FirebaseDatabase.getInstance().getReference(quizAttemptRepository.getRootNode());
         mQuizAttemptRef.addValueEventListener(new ValueEventListener() {
             @Override
@@ -246,13 +245,10 @@ public class QuizAttemptViewModel extends ViewModel {
                 Log.w("TAG: ", databaseError.getMessage());
             }
         });
-        return true;
     }
 
-    public boolean removeQuizAttempt(String quizItemId, String userId) {
+    private void removeQuizAttempt(String quizItemId, String userId) {
         mQuizAttemptRef = FirebaseDatabase.getInstance().getReference(quizAttemptRepository.getRootNode());
         mQuizAttemptRef.child(userId).child(quizItemId).removeValue();
-
-        return true;
     }
 }

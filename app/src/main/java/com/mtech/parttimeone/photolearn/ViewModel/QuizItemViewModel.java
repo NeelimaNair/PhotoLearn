@@ -162,7 +162,7 @@ public class QuizItemViewModel extends ViewModel {
         });
     }
 
-    public boolean setQuizItem(QuizItemBO quizItemBO) {
+    private void setQuizItem(QuizItemBO quizItemBO) {
         mQuizItemRef = FirebaseDatabase.getInstance().getReference(quizItemRepository.getRootNode());
         QuizItemEntity eQuizItem = new QuizItemEntity();
         eQuizItem = mapper.mapFrom(quizItemBO);
@@ -170,11 +170,9 @@ public class QuizItemViewModel extends ViewModel {
         //get a unique key from firebase
         String key = mQuizItemRef.child(eQuizItem.getTitleId()).push().getKey();
         mQuizItemRef.child(eQuizItem.getTitleId()).child(key).setValue(quizItemBO);
-
-        return true;
     }
 
-    public boolean removeQuizItem(String titleId) {
+    private void removeQuizItem(String titleId) {
         mQuizItemRef = FirebaseDatabase.getInstance().getReference(quizItemRepository.getRootNode());
         mQuizItemRef.addValueEventListener(new ValueEventListener() {
             @Override
@@ -194,13 +192,10 @@ public class QuizItemViewModel extends ViewModel {
                 Log.w("TAG: ", databaseError.getMessage());
             }
         });
-        return true;
     }
 
-    public boolean removeQuizItem(String titleId, String itemId) {
+    private void removeQuizItem(String titleId, String itemId) {
         mQuizItemRef = FirebaseDatabase.getInstance().getReference(quizItemRepository.getRootNode());
         mQuizItemRef.child(titleId).child(itemId).removeValue();
-
-        return true;
     }
 }
