@@ -25,6 +25,7 @@ import com.mtech.parttimeone.photolearn.R;
 import com.mtech.parttimeone.photolearn.activity.QuizItemCreationActivity;
 import com.mtech.parttimeone.photolearn.activity.QuizItemDetailActivity;
 import com.mtech.parttimeone.photolearn.bo.QuizItemBO;
+import com.squareup.picasso.Picasso;
 
 /**
  * Created by changling on 18/3/18.
@@ -136,8 +137,11 @@ public class QuizItemDetailAdapter extends BaseAdapter  {
                     convertView = LayoutInflater.from(context).inflate(
                             R.layout.quizitem_photo_layout,parent,false);
                     TextView textView = (TextView) convertView.findViewById(R.id.quiz_photo_desc);
+
                     ImageView imageView  = (ImageView) convertView.findViewById(R.id.photo_view);
-                    imageView.setImageResource(R.drawable.pic2);
+                    String mDrawableName = quizItemObj.getItemDesc();
+                    Picasso.get().load(mDrawableName).into(imageView);
+
                     textView.setText(quizItemObj.getItemDesc());
                 }
                 break;

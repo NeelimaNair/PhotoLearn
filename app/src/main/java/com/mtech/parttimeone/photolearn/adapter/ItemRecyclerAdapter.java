@@ -57,15 +57,12 @@ public class ItemRecyclerAdapter extends RecyclerView.Adapter<ItemRecyclerAdapte
 
         String mDrawableName = ItemList.get(position).getPhotoURL();
         Context c = holder.dispimage.getContext();
-        //int resID = c.getResources().getIdentifier(mDrawableName , "drawable", c.getPackageName());
-        //holder.dispimage.setImageResource(resID);
-       // mDrawableName = "https://firebasestorage.googleapis.com/v0/b/photolearn-c06db.appspot.com/o/images%2Flearning%2Ftyut?alt=media&token=99acb196-ed9c-45fd-811b-1e5a7f463ac7";
-        mDrawableName = "https://firebasestorage.googleapis.com/v0/b/photolearn-c06db.appspot.com/o/images%2Flearning%2Futy_67?alt=media&token=9efea33f-8454-4452-b6f9-930ba782b585";
         Picasso.get().load(mDrawableName).into(holder.dispimage);
 
         //set tag
         holder.deletebutton.setTag(position);
         //holder.dispimage.ItemList.get(position).getImage());
+
     }
 
     @Override
@@ -87,7 +84,7 @@ public class ItemRecyclerAdapter extends RecyclerView.Adapter<ItemRecyclerAdapte
             super(view);
             title = (TextView) view.findViewById(R.id.item_title);
             creator = (TextView) view.findViewById(R.id.item_creator);
-            date = (TextView) view.findViewById(R.id.item_date);
+            //date = (TextView) view.findViewById(R.id.item_date);
             location = (TextView) view.findViewById(R.id.item_location);
             description = (TextView) view.findViewById(R.id.item_description);
             dispimage = (ImageView) view.findViewById(R.id.item_image);
