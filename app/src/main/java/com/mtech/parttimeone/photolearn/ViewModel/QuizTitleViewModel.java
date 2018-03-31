@@ -62,7 +62,7 @@ public class QuizTitleViewModel extends ViewModel {
         if (quizTitleBOs == null) {
             quizTitleBOs = new MutableLiveData<>();
         }
-        loadQuizTitles(sessionId,null);
+        loadQuizTitles(sessionId, null);
 
         return quizTitleBOs;
     }
@@ -178,7 +178,7 @@ public class QuizTitleViewModel extends ViewModel {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if (dataSnapshot.getValue() != null) {
                     List<QuizTitleBO> listQuizTitles = new ArrayList<>();
-                    
+
                     for (DataSnapshot sessionSnapshot : dataSnapshot.getChildren()) {
                         QuizTitleEntity eQuizTitle = sessionSnapshot.getValue(QuizTitleEntity.class);
                         QuizTitleBO QuizTitleBO = mapper.map(eQuizTitle);
@@ -223,7 +223,7 @@ public class QuizTitleViewModel extends ViewModel {
         });
     }
 
-    public boolean setQuizTitle(QuizTitleBO quizTitleBO) {
+    private void setQuizTitle(QuizTitleBO quizTitleBO) {
         mQuizTitleRef = FirebaseDatabase.getInstance().getReference(quizTitleRepository.getRootNode());
         QuizTitleEntity eQuizTitle = new QuizTitleEntity();
         eQuizTitle = mapper.mapFrom(quizTitleBO);
@@ -232,10 +232,9 @@ public class QuizTitleViewModel extends ViewModel {
         String key = mQuizTitleRef.child(eQuizTitle.getSessionId()).push().getKey();
         mQuizTitleRef.child(eQuizTitle.getSessionId()).child(key).setValue(eQuizTitle);
         quizTitleBO.setUuid(key);
-        return true;
     }
 
-    public boolean removeQuizTitle(String sessionId) {
+    private void removeQuizTitle(String sessionId) {
         mQuizTitleRef = FirebaseDatabase.getInstance().getReference(quizTitleRepository.getRootNode());
         mQuizTitleRef.addValueEventListener(new ValueEventListener() {
             @Override
@@ -245,9 +244,9 @@ public class QuizTitleViewModel extends ViewModel {
                         String titleId = titleSnapshot.getKey();
                         QuizItemViewModel itemVM = new QuizItemViewModel();
 //                        itemVM.deleteFromTitle(titleId);
-                        }
                     }
-                    mQuizTitleRef.child(sessionId).removeValue();
+                }
+                mQuizTitleRef.child(sessionId).removeValue();
             }
 
             @Override
@@ -255,13 +254,10 @@ public class QuizTitleViewModel extends ViewModel {
                 Log.w("TAG: ", databaseError.getMessage());
             }
         });
-        return true;
     }
 
-    public boolean removeQuizTitle(String sessionId, String titleId) {
+    private void removeQuizTitle(String sessionId, String titleId) {
         mQuizTitleRef = FirebaseDatabase.getInstance().getReference(quizTitleRepository.getRootNode());
         mQuizTitleRef.child(sessionId).child(titleId).removeValue();
-
-        return true;
     }
 }
