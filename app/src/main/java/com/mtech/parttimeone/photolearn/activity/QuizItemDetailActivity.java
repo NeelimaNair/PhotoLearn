@@ -58,8 +58,7 @@ public class QuizItemDetailActivity extends BaseActivity {
         Intent intent = getIntent();
         titleId = intent.getStringExtra("TitleID");
         loadQuizItems();
-        isReview = attemptObj.getSaveState().equals(SUBMIT);
-        initView();
+
         //initData();
         //viewPager.setOffscreenPageLimit(fragmentList.size());
     }
@@ -243,7 +242,6 @@ public class QuizItemDetailActivity extends BaseActivity {
 
        // viewPager.setAdapter(new QuizItemDetailViewPagerAdapter(mFragmentManager,items.size(),items));
 
-        viewPager.setAdapter(new QuizItemDetailViewPagerAdapter(mFragmentManager, itemArray.size()));
 
 //        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
 //            @Override
@@ -336,6 +334,9 @@ public class QuizItemDetailActivity extends BaseActivity {
              @Override
              public void onChanged(@Nullable List<QuizItemBO> QuizItemBOS) {
                itemArray = QuizItemBOS;
+                 isReview = attemptObj.getSaveState() != null&&attemptObj.getSaveState().equals(SUBMIT);
+                 initView();
+                 viewPager.setAdapter(new QuizItemDetailViewPagerAdapter(mFragmentManager, itemArray.size()));
              }
          });
 
@@ -347,7 +348,7 @@ public class QuizItemDetailActivity extends BaseActivity {
 //                   }
 //               });
 
-       Toast.makeText(this, "Error adding Quiz Item!", Toast.LENGTH_SHORT).show();
+      // Toast.makeText(this, "Error adding Quiz Item!", Toast.LENGTH_SHORT).show();
 
 
    }

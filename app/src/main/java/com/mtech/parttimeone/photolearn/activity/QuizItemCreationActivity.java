@@ -135,7 +135,7 @@ public class QuizItemCreationActivity extends ItemCreationActivity {
         Log.d(TAG, "saveItem for Quiz:Call ViewModel to save Item!" + downloadUrl);
         adapter.quizItemObj.setPhotoURL(downloadUrl.toString());
         adapter.quizItemObj.setTitleId(titleId);
-       // adapter.quizItemObj.setUserId(AppUtil.getUserName(this));
+       //adapter.quizItemObj.setUserId(AppUtil.getUserName(this));
         QuizItemViewModel vmquizItemViewModel = ViewModelProviders.of(this).get(QuizItemViewModel.class);
         try {
             vmquizItemViewModel.createQuizItem(adapter.quizItemObj);

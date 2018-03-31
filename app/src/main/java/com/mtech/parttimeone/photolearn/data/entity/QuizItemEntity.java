@@ -10,17 +10,17 @@ import java.util.List;
 public class QuizItemEntity {
     private String titleId;
     private String itemId;
-    private String quizTitle;
+    private String itemtitle;
     private String photoURL;
     private String itemDesc;
     private List<String> answer = new ArrayList<>();
     private List<String> isOptionAns = new ArrayList<>();
     private String solution;
 
-    private void QuizItemEntity(String titleId, String itemId, String quizTitle, String photoURL, String itemDesc, List<String> answer, List<String> isOptionAns, String solution) {
+    private void QuizItemEntity(String titleId, String itemId, String itemtitle, String photoURL, String itemDesc, List<String> answer, List<String> isOptionAns, String solution) {
         this.titleId = titleId;
         this.itemId = itemId;
-        this.quizTitle = quizTitle;
+        this.itemtitle = itemtitle;
         this.photoURL = photoURL;
         this.itemDesc = itemDesc;
         this.answer = answer;
@@ -36,9 +36,9 @@ public class QuizItemEntity {
 
     public void setItemId(String itemId) { this.itemId = itemId; }
 
-    public String getQuizTitle() { return quizTitle; }
+    public String getItemtitle() { return itemtitle; }
 
-    public void setQuizTitle(String quizTitle) { this.quizTitle = quizTitle; }
+    public void setItemtitle(String itemtitle) { this.itemtitle = itemtitle; }
 
     public String getPhotoURL() { return photoURL; }
 

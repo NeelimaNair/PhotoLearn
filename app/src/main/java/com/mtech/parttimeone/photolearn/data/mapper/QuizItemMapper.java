@@ -18,8 +18,8 @@ public class QuizItemMapper extends FirebaseMapper<QuizItemEntity, QuizItemBO> {
             QuizItemBO.setTitleId(eQuizItem.getTitleId());
         }
 
-        if (StringUtils.isNotEmpty(eQuizItem.getQuizTitle())) {
-            QuizItemBO.setItemtitle(eQuizItem.getQuizTitle());
+        if (StringUtils.isNotEmpty(eQuizItem.getItemtitle())) {
+            QuizItemBO.setItemtitle(eQuizItem.getItemtitle());
         }
 
         if (StringUtils.isNotEmpty(eQuizItem.getPhotoURL())) {
@@ -58,7 +58,7 @@ public class QuizItemMapper extends FirebaseMapper<QuizItemEntity, QuizItemBO> {
         }
 
         if (StringUtils.isNotEmpty(QuizItemBO.getItemtitle())) {
-            eQuizItem.setQuizTitle(QuizItemBO.getItemtitle());
+            eQuizItem.setItemtitle(QuizItemBO.getItemtitle());
         }
 
         if (StringUtils.isNotEmpty(QuizItemBO.getPhotoURL())) {
