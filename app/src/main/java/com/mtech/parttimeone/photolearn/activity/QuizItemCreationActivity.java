@@ -28,6 +28,7 @@ public class QuizItemCreationActivity extends ItemCreationActivity {
     private ListView listView;
     QuizItemCreationAdapter adapter;
     private boolean isCreation;
+    private Boolean isUploadingData = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,7 +71,7 @@ public class QuizItemCreationActivity extends ItemCreationActivity {
         super.setPageTitle("Create Quiz Item");
         listView = findViewById(R.id.quiz_creation_list);
         adapter = new QuizItemCreationAdapter(this);
-
+        adapter.quizItemObj.addOption("");
        // initData();
 //        if (adapter.quizItemObj.getOptions().isEmpty()){
 //            // add new item
@@ -95,6 +96,8 @@ public class QuizItemCreationActivity extends ItemCreationActivity {
 
     public void submitQuizItem(Uri file) {
         setItemType(QUIZ_TYPE);
+        findViewById(R.id.loadingPanel).setVisibility(View.VISIBLE);
+        isUploadingData = true;
         new UploadAsyncTask(QuizItemCreationActivity.this).execute(file);
     }
 
@@ -136,11 +139,15 @@ public class QuizItemCreationActivity extends ItemCreationActivity {
             vmquizItemViewModel.createQuizItem(adapter.quizItemObj);
             findViewById(R.id.loadingPanel).setVisibility(View.GONE);
             Toast.makeText(this,"Add Quiz Item Successfully!",Toast.LENGTH_SHORT).show();
+            findViewById(R.id.loadingPanel).setVisibility(View.GONE);
+            isUploadingData = false;
             this.onBackPressed();
 
         } catch (Exception e) {
+
             e.printStackTrace();
             Toast.makeText(this,"Error adding Quiz Item!",Toast.LENGTH_SHORT).show();
+            isUploadingData = false;
             findViewById(R.id.loadingPanel).setVisibility(View.GONE);
 
         }
