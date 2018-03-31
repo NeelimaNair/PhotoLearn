@@ -19,6 +19,7 @@ import com.mtech.parttimeone.photolearn.ViewModel.QuizItemViewModel;
 import com.mtech.parttimeone.photolearn.asyncTask.UploadAsyncTask;
 import com.mtech.parttimeone.photolearn.bo.QuizItemBO;
 import com.mtech.parttimeone.photolearn.handler.LifeCycleHandler;
+import com.mtech.parttimeone.photolearn.util.AppUtil;
 
 public class QuizItemCreationActivity extends ItemCreationActivity {
 
@@ -26,8 +27,10 @@ public class QuizItemCreationActivity extends ItemCreationActivity {
 
     private String titleId;
     private ListView listView;
+    private String mode;
     QuizItemCreationAdapter adapter;
     private boolean isCreation;
+    private Boolean isUploadingData = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,7 +39,7 @@ public class QuizItemCreationActivity extends ItemCreationActivity {
 
         Intent intent = getIntent();
         titleId = intent.getStringExtra("TitleID");
-
+        mode = intent.getStringExtra("Mode");
         initView();
     }
 
@@ -70,7 +73,7 @@ public class QuizItemCreationActivity extends ItemCreationActivity {
         super.setPageTitle("Create Quiz Item");
         listView = findViewById(R.id.quiz_creation_list);
         adapter = new QuizItemCreationAdapter(this);
-
+        adapter.quizItemObj.addOption("");
        // initData();
 //        if (adapter.quizItemObj.getOptions().isEmpty()){
 //            // add new item
@@ -95,6 +98,8 @@ public class QuizItemCreationActivity extends ItemCreationActivity {
 
     public void submitQuizItem(Uri file) {
         setItemType(QUIZ_TYPE);
+        findViewById(R.id.loadingPanel).setVisibility(View.VISIBLE);
+        isUploadingData = true;
         new UploadAsyncTask(QuizItemCreationActivity.this).execute(file);
     }
 
@@ -130,17 +135,21 @@ public class QuizItemCreationActivity extends ItemCreationActivity {
         Log.d(TAG, "saveItem for Quiz:Call ViewModel to save Item!" + downloadUrl);
         adapter.quizItemObj.setPhotoURL(downloadUrl.toString());
         adapter.quizItemObj.setTitleId(titleId);
-       // adapter.quizItemObj.setUserId(LifeCycleHandler.getInstance().getAccountBO().getUid());
+       //adapter.quizItemObj.setUserId(AppUtil.getUserName(this));
         QuizItemViewModel vmquizItemViewModel = ViewModelProviders.of(this).get(QuizItemViewModel.class);
         try {
             vmquizItemViewModel.createQuizItem(adapter.quizItemObj);
             findViewById(R.id.loadingPanel).setVisibility(View.GONE);
             Toast.makeText(this,"Add Quiz Item Successfully!",Toast.LENGTH_SHORT).show();
+            findViewById(R.id.loadingPanel).setVisibility(View.GONE);
+            isUploadingData = false;
             this.onBackPressed();
 
         } catch (Exception e) {
+
             e.printStackTrace();
             Toast.makeText(this,"Error adding Quiz Item!",Toast.LENGTH_SHORT).show();
+            isUploadingData = false;
             findViewById(R.id.loadingPanel).setVisibility(View.GONE);
 
         }

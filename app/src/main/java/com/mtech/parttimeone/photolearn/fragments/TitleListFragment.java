@@ -130,14 +130,14 @@ public class TitleListFragment extends android.support.v4.app.Fragment {
                         switch (dao.getMode(FragmentSelf)){
                             case PARTICIPANT:
                                 Intent iq = new Intent(getActivity(), QuizItemDetailActivity.class);
-                                iq.putExtra("TitleID", mParam2);
+                                iq.putExtra("TitleID", sessiontitleid.getText().toString());
                                 startActivity(iq);
                                 break;
 
                             case TRAINER:
                                 //act.setItemListFragment(mParam1,sessiontitleid.getText().toString(),mParam2);
                                 Intent iq2 = new Intent(getActivity(), QuizItemCreationActivity.class);
-                                iq2.putExtra("TitleID", mParam2);
+                                iq2.putExtra("TitleID", sessiontitleid.getText().toString());
                                 iq2.putExtra("Mode", "UPDATE");
                                 startActivity(iq2);
                                 break;

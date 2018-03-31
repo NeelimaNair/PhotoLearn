@@ -9,6 +9,7 @@ import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -30,7 +31,7 @@ public class LearnItemCreationActivity extends ItemCreationActivity {
     private LearningItemCreationAdapter adapter;
 
     private static final String LEARNING_TYPE = "LEARNING";
-
+    private Boolean isUploadingData = false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -72,20 +73,21 @@ public class LearnItemCreationActivity extends ItemCreationActivity {
         listView = (ListView) findViewById(R.id.learnning_creation_list);
         adapter = new LearningItemCreationAdapter(this);
         listView.setAdapter(adapter);
+
     }
 
     //function for click the done button.
+
     public void createtheLearningItem(Uri file) {
-        String title = adapter.itemBO.getItemtitle();
+            if (isUploadingData==true) return;
+            String title = adapter.itemBO.getItemtitle();
         setItemType(LEARNING_TYPE);
         if (StringUtils.isBlank(title)) {
             Toast toast = Toast.makeText(LearnItemCreationActivity.this, "Title should not be blank.", Toast.LENGTH_LONG);
         } else {
-
+            isUploadingData=true;
             findViewById(R.id.loadingPanel).setVisibility(View.VISIBLE);
             new UploadAsyncTask((LearnItemCreationActivity) this).execute(file);
-
-
         }
 
 
@@ -134,11 +136,13 @@ public class LearnItemCreationActivity extends ItemCreationActivity {
             vmlearningItemViewModel.createLearningItem(adapter.itemBO);
             this.onBackPressed();
             findViewById(R.id.loadingPanel).setVisibility(View.GONE);
+            isUploadingData = false;
             Toast.makeText(this,"Add Learning Item Successfully!",Toast.LENGTH_SHORT).show();
 
         } catch (Exception e) {
             e.printStackTrace();
             findViewById(R.id.loadingPanel).setVisibility(View.GONE);
+            isUploadingData = false;
             Toast.makeText(this,"Error adding Learning Item!",Toast.LENGTH_SHORT).show();
         }
 

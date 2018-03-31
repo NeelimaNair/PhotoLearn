@@ -139,7 +139,7 @@ public class QuizItemDetailAdapter extends BaseAdapter  {
                     TextView textView = (TextView) convertView.findViewById(R.id.quiz_photo_desc);
 
                     ImageView imageView  = (ImageView) convertView.findViewById(R.id.photo_view);
-                    String mDrawableName = quizItemObj.getItemDesc();
+                    String mDrawableName = quizItemObj.getPhotoURL();
                     Picasso.get().load(mDrawableName).into(imageView);
 
                     textView.setText(quizItemObj.getItemDesc());
@@ -158,7 +158,7 @@ public class QuizItemDetailAdapter extends BaseAdapter  {
                         TextView optionText = (TextView)convertView.findViewById(R.id.text_quiz_option_readonly);
                         optionText.setText(quizItemObj.getAnswer().get(position-2));
                         //TODO
-                        /*
+
                         if (quizItemObj.isAnsCorrect()){
                             if (quizItemObj.getQuizAttemptBO().isAns(position-2)) {
                                 optionText.setTextColor(Color.parseColor("#0B6623")); // green
@@ -172,7 +172,7 @@ public class QuizItemDetailAdapter extends BaseAdapter  {
                                 optionText.setTextColor(Color.parseColor("#FF000000")); // black
                             }
                         }
-                        */
+
                     }
                 }
                 break;
