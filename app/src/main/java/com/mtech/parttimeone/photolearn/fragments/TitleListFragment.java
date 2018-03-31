@@ -130,7 +130,7 @@ public class TitleListFragment extends android.support.v4.app.Fragment {
                         switch (dao.getMode(FragmentSelf)){
                             case PARTICIPANT:
                                 Intent iq = new Intent(getActivity(), QuizItemDetailActivity.class);
-                                iq.putExtra("TitleID", mParam2);
+                                iq.putExtra("TitleID", sessiontitleid.getText().toString());
                                 startActivity(iq);
                                 break;
 

@@ -1,7 +1,10 @@
 package com.mtech.parttimeone.photolearn.activity;
 
+import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -31,6 +34,7 @@ import com.mtech.parttimeone.photolearn.bo.QuizTitleBO;
 import com.mtech.parttimeone.photolearn.dummyModel.Item;
 import com.mtech.parttimeone.photolearn.fragments.LearningSessionListFragment;
 import com.mtech.parttimeone.photolearn.fragments.QuizItemDetailFragment;
+import com.mtech.parttimeone.photolearn.handler.LifeCycleHandler;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -51,9 +55,12 @@ public class QuizItemDetailActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_quiz_item_detail);
+        Intent intent = getIntent();
+        titleId = intent.getStringExtra("TitleID");
+        loadQuizItems();
         isReview = attemptObj.getSaveState().equals(SUBMIT);
         initView();
-        initData();
+        //initData();
         //viewPager.setOffscreenPageLimit(fragmentList.size());
     }
 
@@ -324,16 +331,25 @@ public class QuizItemDetailActivity extends BaseActivity {
 
    private void loadQuizItems(){
         QuizItemViewModel vmquizItemViewModel = ViewModelProviders.of(this).get(QuizItemViewModel.class);
-       try {
 
-         vmquizItemViewModel.getQuizItems(titleId);
+         vmquizItemViewModel.getQuizItems(titleId).observe(this, new Observer<List<QuizItemBO>>() {
+             @Override
+             public void onChanged(@Nullable List<QuizItemBO> QuizItemBOS) {
+               itemArray = QuizItemBOS;
+             }
+         });
 
-       } catch (Exception e) {
+//       QuizAttemptViewModel vmAttemViewModel = ViewModelProviders.of(this).get(QuizAttemptViewModel.class);
+//       vmAttemViewModel.getQuizAttempt(titleId, LifeCycleHandler.getInstance().getAccountBO().getUserUid()).observe(this, new Observer<QuizAttemptBO>() {
+//                   @Override
+//                   public void onChanged(@Nullable QuizAttemptBO quizAttemptBO) {
+//                       attemptObj =quizAttemptBO;
+//                   }
+//               });
 
-           e.printStackTrace();
-           Toast.makeText(this,"Error adding Quiz Item!",Toast.LENGTH_SHORT).show();
+       Toast.makeText(this, "Error adding Quiz Item!", Toast.LENGTH_SHORT).show();
 
-       }
+
    }
 
 
