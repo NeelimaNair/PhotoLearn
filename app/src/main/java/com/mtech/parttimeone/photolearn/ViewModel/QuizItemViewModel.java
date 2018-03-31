@@ -148,7 +148,7 @@ public class QuizItemViewModel extends ViewModel {
                     for (DataSnapshot sessionSnapshot : dataSnapshot.getChildren()) {
                         QuizItemEntity eQuizItem = sessionSnapshot.getValue(QuizItemEntity.class);
                         QuizItemBO quizItemBO = mapper.map(eQuizItem);
-                        quizItemBO.setUuid(dataSnapshot.getKey());
+                        quizItemBO.setUuid(sessionSnapshot.getKey());
                         listQuizItems.add(quizItemBO);
                     }
                     quizItemBOs.setValue(listQuizItems);
