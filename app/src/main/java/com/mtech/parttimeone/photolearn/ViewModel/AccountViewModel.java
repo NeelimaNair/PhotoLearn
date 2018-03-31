@@ -3,6 +3,7 @@ package com.mtech.parttimeone.photolearn.ViewModel;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
+import android.util.Log;
 
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -11,12 +12,9 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.mtech.parttimeone.photolearn.bo.AccountBO;
-import com.mtech.parttimeone.photolearn.bo.ParticipantBO;
-import com.mtech.parttimeone.photolearn.bo.TrainerBO;
-import com.mtech.parttimeone.photolearn.converter.AccountConverter;
-import com.mtech.parttimeone.photolearn.data.model.AccountModel;
+import com.mtech.parttimeone.photolearn.data.entity.AccountEntity;
+import com.mtech.parttimeone.photolearn.data.mapper.AccountMapper;
 import com.mtech.parttimeone.photolearn.data.repository.AccountRepository;
-import com.mtech.parttimeone.photolearn.data.repository.FirebaseDatabaseRepository;
 import com.mtech.parttimeone.photolearn.handler.LifeCycleHandler;
 
 import org.apache.commons.lang3.StringUtils;
@@ -24,17 +22,43 @@ import org.apache.commons.lang3.StringUtils;
 import java.util.List;
 
 public class AccountViewModel extends ViewModel {
-    private MutableLiveData<List<AccountModel>> accounts;
+    private MutableLiveData<List<AccountEntity>> accounts;
+    private MutableLiveData<AccountBO> account;
+
+    private AccountMapper mapper = new AccountMapper();
     private AccountRepository repository = new AccountRepository();
     private DatabaseReference mDatabaseReference;
-    private AccountModel account = null;
 
-    public LiveData<List<AccountModel>> getAccounts() {
-        if (accounts == null) {
-            accounts = new MutableLiveData<>();
-            loadAccounts();
+    public LiveData<AccountBO> getAccount(FirebaseUser user) {
+        if (account == null) {
+            account = new MutableLiveData<>();
+            loadAccount(user);
         }
-        return accounts;
+        return account;
+    }
+
+    private void loadAccount(FirebaseUser user) {
+        mDatabaseReference = FirebaseDatabase.getInstance().getReference(repository.getRootNode());
+        mDatabaseReference.child(user.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                AccountEntity eAccount = dataSnapshot.getValue(AccountEntity.class);
+
+                // means that it is a new user
+                if (eAccount == null) {
+                    eAccount = createAccount(user);
+                }
+
+                account.setValue(mapper.map(eAccount));
+
+                storeSessionAccountDetails(eAccount);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.w("TAG: ", databaseError.getMessage());
+            }
+        });
     }
 
     @Override
@@ -42,81 +66,52 @@ public class AccountViewModel extends ViewModel {
         repository.removeListener();
     }
 
-    private void loadAccounts() {
-        repository.addListener(new FirebaseDatabaseRepository.FirebaseDatabaseRepositoryCallback<AccountModel>() {
-            @Override
-            public void onSuccess(List<AccountModel> result) {
-                accounts.setValue(result);
-            }
-
-            @Override
-            public void onError(Exception e) {
-                accounts.setValue(null);
-            }
-        });
-    }
-
-    private void getAccount(FirebaseUser user) {
-        mDatabaseReference = FirebaseDatabase.getInstance().getReference(repository.getRootNode());
-        mDatabaseReference.child(user.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                account = dataSnapshot.getValue(AccountModel.class);
-
-                // means that it is a new user
-                if (account == null) {
-                    account = createAccount(user);
-                }
-                storeSessionAccountDetails(account);
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-    }
-
-    private void storeSessionAccountDetails(AccountModel account) {
+    private void storeSessionAccountDetails(AccountEntity account) {
         LifeCycleHandler handler = LifeCycleHandler.getInstance();
 
-        AccountConverter mapper = new AccountConverter();
-
-        AccountBO accountBO = mapper.mapTo(account);
-        accountBO.setTrainerBO(new TrainerBO());
-        accountBO.setParticipantBO(new ParticipantBO());
+        AccountBO accountBO = mapper.map(account);
+        //accountBO.setTrainerBO(new TrainerBO());
+        //accountBO.setParticipantBO(new ParticipantBO());
 
         handler.setAccountBO(accountBO);
     }
 
-    public void setAccount(AccountModel mAccount) {
+    public void setAccount(AccountBO mAccount) {
+        AccountEntity eAccount;
+        eAccount = mapper.mapFrom(mAccount);
+
         mDatabaseReference = FirebaseDatabase.getInstance().getReference(repository.getRootNode());
-        mDatabaseReference.child(mAccount.getUserUid()).setValue(mAccount);
+        mDatabaseReference.child(eAccount.getUserId()).setValue(mAccount);
     }
 
-    public void signIn(FirebaseUser user) {
-        getAccount(user);
+    public void updateAccount(AccountBO mAccount) {
+        AccountEntity eAccount;
+        eAccount = mapper.mapFrom(mAccount);
+
+        mDatabaseReference = FirebaseDatabase.getInstance().getReference(repository.getRootNode());
+        mDatabaseReference.child(eAccount.getUserId()).child("lastActive").setValue(eAccount.getLastActive());
     }
 
-    private AccountModel createAccount(FirebaseUser user) {
-        AccountModel accountModel = new AccountModel();
+    private AccountEntity createAccount(FirebaseUser user) {
+        AccountEntity eAccount = new AccountEntity();
 
-        accountModel.setLastActive("TRAINER");
-        accountModel.setUserUid(user.getUid());
-
+        eAccount.setLastActive("TRAINER");
+        eAccount.setUserId(user.getUid());
         if (StringUtils.isNotEmpty(user.getEmail())) {
-            accountModel.setEmail(user.getEmail());
+            eAccount.setEmail(user.getEmail());
         } else {
-            accountModel.setEmail("");
+            eAccount.setEmail("");
         }
 
         if (StringUtils.isNotEmpty(user.getDisplayName())) {
-            accountModel.setName(user.getDisplayName());
+            eAccount.setName(user.getDisplayName());
         } else {
-            accountModel.setName("");
+            eAccount.setName("");
         }
 
-        setAccount(accountModel);
-        return accountModel;
+        AccountBO accountBO = mapper.map(eAccount);
+        setAccount(accountBO);
+
+        return eAccount;
     }
 }
